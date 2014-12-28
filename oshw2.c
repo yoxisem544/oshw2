@@ -9,10 +9,10 @@
 //thread
 #include <pthread.h>
 
-int G_x, G_y;
+int G_x = 10, G_y = 10;
 int r_p_p = 10, l_p_p = 10;
 int yo;
-int dir_x = 2, dir_y = 1;
+int dir_x = 1, dir_y = 1;
 WINDOW *field;
 int ball_speed = 50000;
 int yar,yal;
@@ -20,6 +20,7 @@ char c[64];
 int r_s = 0, l_s = 0;
 int offset = 10;
 int shifting = 0;
+int parent_x, parent_y, new_x, new_y;
 void int2str(int i, char *s) {
   sprintf(s,"%d",i);
 }
@@ -40,20 +41,20 @@ void clean_field(WINDOW *screen)
 	int x, y, i, j;
 	getmaxyx(screen, y, x);
 
-	for (i = 1; i < x - 1 ; i++)
+	for (i = 1; i < parent_x - 1 ; i++)
 	{
-		for (j = 1; j < y - 1; j++)
+		for (j = 1; j < parent_y - 1; j++)
 		{
 			mvwprintw(screen, j, i, " ");
 		}
 	}
-	for (i = 1; i <= 24; i++)
-		mvwprintw(screen, i, 40, "|");
+	for (i = 1; i < parent_y -1; i++)
+		mvwprintw(screen, i, parent_x / 2, "|");
 	//score
 	int2str(r_s,c);
-	mvwprintw(screen, 1, 40-3, c);	
+	mvwprintw(screen, 1, parent_x/2-3, c);	
 	int2str(l_s,c);
-	mvwprintw(screen, 1, 40+3, c);
+	mvwprintw(screen, 1, parent_x/2+3, c);
 
 	//draw picture
 	srand(time(NULL));
@@ -108,11 +109,11 @@ void draw_player(WINDOW *screen)
 	mvwprintw(screen, r_p_p-2, 2, "{");
 	mvwprintw(screen, r_p_p+2, 2, "{");
 
-	mvwprintw(screen, l_p_p, 80, "}");
-	mvwprintw(screen, l_p_p-1, 80, "}");
-	mvwprintw(screen, l_p_p+1, 80, "}");
-	mvwprintw(screen, l_p_p-2, 80, "}");
-	mvwprintw(screen, l_p_p+2, 80, "}");
+	mvwprintw(screen, l_p_p, parent_x -3, "}");
+	mvwprintw(screen, l_p_p-1, parent_x -3, "}");
+	mvwprintw(screen, l_p_p+1, parent_x -3, "}");
+	mvwprintw(screen, l_p_p-2, parent_x -3, "}");
+	mvwprintw(screen, l_p_p+2, parent_x -3, "}");
 }
 void i_m_keyboard()
 {
@@ -148,8 +149,8 @@ void r_player()
 			}
 			else if (yar == 's' || yar == 'S')
 			{
-				if (r_p_p >= 22)
-					r_p_p = 22;
+				if (r_p_p >= parent_y -4)
+					r_p_p = parent_y -4;
 				else
 					r_p_p += 1; // move down
 			}
@@ -173,8 +174,8 @@ void l_player()
 			}
 			else if (yal == 'k' || yal == 'K')
 			{
-				if (l_p_p >= 22)
-					l_p_p = 22;
+				if (l_p_p >= parent_y-4)
+					l_p_p = parent_y-4;
 				else
 					l_p_p += 1; // move down
 			}
@@ -189,19 +190,40 @@ void position()
 	int i = 0;
 	while(1)
 	{	
-		if (G_x == 0) 
+		G_x += dir_x;
+		G_y += dir_y;
+		//left border
+		if (G_x <= 0) 
 		{
 			G_x = 1;
 		}
-		if (G_y == 0) G_y = 1;
-		if (G_x > 81) 
+		// top border
+		if (G_y <= 0) G_y = 1;
+		// right border
+		// fuck you
+		if (G_x >= parent_x - 2) 
 		{ 
-			G_x = G_x/81;
+			G_x = (parent_x - 2);
 		}
-		G_x += dir_x;
-		if (G_y > 24) G_y = G_y/24;
-		G_y += dir_y;
-		//change direction
+		// detect bottom
+		if (G_y >= parent_y - 2) 
+		{
+			G_y = (parent_y - 2);
+		}
+
+		//hit wall
+		if ( (G_x >= (parent_x - 2)) || (G_x <= 1) )
+		{
+			dir_x *= (-1);
+			// scoring region
+			if (G_x >= (parent_x - 2)) r_s += 1;
+			if (G_x <= 1)  l_s += 1;
+		}
+
+		if (G_y >= (parent_y - 2) || G_y <= 1)
+		{ 
+			dir_y *= (-1);
+		}
 
 		//verify hitting
 		if (G_x == 3)
@@ -213,7 +235,7 @@ void position()
 				dir_x *= (-1);
 			}
 		}
-		else if (G_x == 79)
+		if (G_x == (parent_x - 4))
 		{
 			int helloworld = abs(l_p_p - G_y);
 			if (helloworld <= 3)
@@ -223,19 +245,7 @@ void position()
 			}
 		}
 
-		//hit wall
-		if (G_x >= 81 || G_x == 1) 
-		{
-			dir_x *= (-1);
-			// scoring region
-			if (G_x >= 81) r_s += 1;
-			if (G_x <= 1)  l_s += 1;
-		}
-		srand(time(NULL));
-		if (G_y == 24 || G_y == 1)
-		{ 
-			dir_y *= (-1);
-		}
+		
 		usleep(ball_speed);
 	}
 	printf("end of position thread for debugging.\n");
@@ -243,7 +253,6 @@ void position()
 
 int main()
 {
-	int parent_x = 20, parent_y = 50;
 	int a;
 	//thread
 		pthread_t id, id_for_keyboard, l_id, r_id, r_key, l_key;
@@ -297,11 +306,23 @@ int main()
 	draw_borders(field);
 	// simulate the game loop
 	while(1) {
+		//resposive
+		getmaxyx(stdscr, new_y, new_x);
+		if (new_y != parent_y || new_x != parent_x) {
+	    	parent_x = new_x;
+	    	parent_y = new_y;
+	    	wresize(field, new_y, new_x);
+	    	wclear(stdscr);
+	    	wclear(field);
+	    	draw_borders(field);
+	    }
+
 		// draw to our windows
 		mvwprintw(field, 1, 1, "Field");
 		clean_field(field);
 		draw_player(field);
 		draw_ball(field);
+		draw_borders(field);
 	  	// refresh each window
 	    wrefresh(field);
 	}

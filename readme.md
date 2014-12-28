@@ -6,12 +6,22 @@
 	-lcurses
 	-lncurses
 	
+##特色
+	1. responsive design
+	2. 好玩
+	3. 不會玩到破台
 ##Terminal
-長寬必須設置為
+長必須為
 
-	83 X 26
+	奇數
 	
-還沒做responsive
+responsive做好囉！
+
+可以拉來拉去
+
+上上下下拉好蚌蚌
+
+左左右會會死
 ##說明
 player 1
 
