@@ -6,6 +6,12 @@
 	-lcurses
 	-lncurses
 	
+##Terminal
+長寬必須設置為
+
+	83 X 26
+	
+還沒做responsive
 ##說明
 player 1
 
