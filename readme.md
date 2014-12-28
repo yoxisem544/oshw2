@@ -10,18 +10,17 @@
 	1. responsive design
 	2. 好玩
 	3. 不會玩到破台
-##Terminal
-長必須為
-
-	奇數
-	
-responsive做好囉！
+	4. 可以破壞友誼
+	5. 會有跑馬燈跑來跑去唷！
+	6. 球速可以調，WOOWOOOOO
+##Responsive Terminal Game Window
+responsive table teenis 做好囉！
 
 可以拉來拉去
 
-上上下下拉好蚌蚌
+上上下下拉好棒棒
 
-左左右會會死
+左左右右好好玩
 ##說明
 player 1
 
@@ -33,14 +32,23 @@ player 2
 	上 => i
 	下 => k
 	
+控制
+
+	r => 球球減速
+	t =>
+	
 規則
 
+	@  是 球
+	{  是 球拍
+	} 也是 球拍
+	
 	打掛別人就好
 
 得分
 
 	1. 碰到對方牆壁
-	2. 塞進對方球拍裡面會瘋狂得分
+	2. 球塞進對方球拍裡面會瘋狂得分，唷！
 	
 ##預覽
 ![preview](1.png)
