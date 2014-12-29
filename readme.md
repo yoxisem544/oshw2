@@ -35,7 +35,7 @@ player 2
 控制
 
 	r => 球球減速
-	t =>
+	t => 球球加速
 	
 規則
 
@@ -52,6 +52,11 @@ player 2
 	
 ##預覽
 ![preview](1.png)
+##參考
+教你如何在terminal畫圖，windows不保證。
 
+畢竟我不用windows嘛。
+
+	http://viget.com/extend/c-games-in-ncurses-using-multiple-windows
 	
 	
