@@ -21,6 +21,7 @@ int r_s = 0, l_s = 0;
 int offset = 10;
 int shifting = 0;
 int parent_x, parent_y, new_x, new_y;
+int quit = ' ';
 void int2str(int i, char *s) {
   sprintf(s,"%d",i);
 }
@@ -131,6 +132,7 @@ void i_m_keyboard()
 		if (yo == 's' || yo == 'S') yar = yo;
 		if (yo == 'i' || yo == 'I') yal = yo;
 		if (yo == 'k' || yo == 'K') yal = yo;
+		if (yo == 'q' || yo == 'Q') quit = yo;
 	}
 }
 
@@ -325,7 +327,10 @@ int main()
 		draw_borders(field);
 	  	// refresh each window
 	    wrefresh(field);
+	    if (quit == 'q' || quit == 'Q') break;
 	}
+
+	printf("\n\n      Game over!\n");
 
 	return 0;
 }
