@@ -36,6 +36,9 @@ player 2
 
 	r => 球球減速
 	t => 球球加速
+
+	q => quit game
+	c => clear score
 	
 規則
 

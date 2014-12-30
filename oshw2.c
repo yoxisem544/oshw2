@@ -125,7 +125,7 @@ void i_m_keyboard()
 			ball_speed += 10000;
 		if (yo == 't' || yo == 'T')
 			if (ball_speed <= 10000)
-				ball_speed = 20000;
+				ball_speed = 10000;
 			else
 				ball_speed -= 10000;
 		if (yo == 'w' || yo == 'W') yar = yo;
@@ -133,6 +133,7 @@ void i_m_keyboard()
 		if (yo == 'i' || yo == 'I') yal = yo;
 		if (yo == 'k' || yo == 'K') yal = yo;
 		if (yo == 'q' || yo == 'Q') quit = yo;
+		if (yo == 'c' || yo == 'C') r_s = l_s = 0;
 	}
 }
 
