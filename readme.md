@@ -37,8 +37,11 @@ player 2
 	r => 球球減速
 	t => 球球加速
 
+	n => 2 ball mode / 1 ball mode
+
 	q => quit game
 	c => clear score
+	h => 跑馬燈開關
 	
 規則
 
