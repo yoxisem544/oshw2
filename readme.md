@@ -59,7 +59,11 @@ player 2
 	2. 球塞進對方球拍裡面會瘋狂得分，唷！
 	
 ##預覽
+###一般模式
 ![preview](1.png)
+###魔法模式
+![preview](2.png)
+![preview](3.png)
 ##參考
 教你如何在terminal畫圖，windows不保證。
 
