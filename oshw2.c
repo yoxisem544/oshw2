@@ -14,14 +14,17 @@
 int G_x = 10, G_y = 10;
 // ball 2
 int G_x_2 = 20, G_y_2 = 20;
+int G_x_3 = 40, G_y_3 = 10;
 
-int G2_vis = 0;
+int G2_vis = 0, G3_vis = 0;
 int run_horse = 1;
+int magic_mode = 0;
 
 int r_p_p = 10, l_p_p = 10;
 int yo;
 int dir_x = 1, dir_y = 1;
 int dir_x_2 = -1, dir_y_2 = -1;
+int dir_x_3 = 1, dir_y_3 = -1;
 WINDOW *field;
 int ball_speed = 50000;
 int yar,yal;
@@ -51,6 +54,7 @@ void clean_field(WINDOW *screen)
 	int x, y, i, j;
 	getmaxyx(screen, y, x);
 
+	// clear field
 	for (i = 1; i < parent_x - 1 ; i++)
 	{
 		for (j = 1; j < parent_y - 1; j++)
@@ -58,8 +62,24 @@ void clean_field(WINDOW *screen)
 			mvwprintw(screen, j, i, " ");
 		}
 	}
+
+	// draw middle line
 	for (i = 1; i < parent_y -1; i++)
 		mvwprintw(screen, i, parent_x / 2, "|");
+	//draw magic mode
+	if (magic_mode == 1 && G3_vis == 1 && G2_vis == 1)
+		mvwprintw(screen, parent_y - 2, parent_x / 2-2-4, "Magic 3 balls");
+	else if (magic_mode == 1 && G3_vis == 1)
+		mvwprintw(screen, parent_y - 2, parent_x / 2-2-4, "Magic 2 balls");
+	else if (magic_mode == 1 && G2_vis == 1)
+		mvwprintw(screen, parent_y - 2, parent_x / 2-2-4, "Magic 2 balls");
+	else if (G3_vis == 1 && G2_vis == 1)
+		mvwprintw(screen, parent_y - 2, parent_x / 2-2, "3 balls");
+	else if (G3_vis == 1 || G2_vis == 1 && magic_mode != 1)
+		mvwprintw(screen, parent_y - 2, parent_x / 2-2, "2 balls");
+	else if (magic_mode == 1)
+		mvwprintw(screen, parent_y - 2, parent_x / 2-2, "Magic");
+
 	//score
 	int2str(r_s,c);
 	mvwprintw(screen, 1, parent_x/2-3, c);	
@@ -116,7 +136,16 @@ void draw_ball2(WINDOW *screen)
 	getmaxyx(screen, y, x);
 	
 	//draw ball
-	mvwprintw(screen, G_y_2, G_x_2, "@");
+	mvwprintw(screen, G_y_2, G_x_2, "Q");
+}
+
+void draw_ball3(WINDOW *screen)
+{
+	int x, y, i;
+	getmaxyx(screen, y, x);
+	
+	//draw ball
+	mvwprintw(screen, G_y_3, G_x_3, "G");
 }
 
 void draw_player(WINDOW *screen)
@@ -155,10 +184,20 @@ void i_m_keyboard()
 		if (yo == 'k' || yo == 'K') yal = yo;
 		if (yo == 'q' || yo == 'Q') quit = yo;
 		if (yo == 'c' || yo == 'C') r_s = l_s = 0;
+		if (yo == 'm' || yo == 'M') 
+		{
+			if(magic_mode == 1) magic_mode = 0;
+			else magic_mode = 1;
+		}
 		if (yo == 'n' || yo == 'N')
 		{
 			if(G2_vis == 1) G2_vis = 0;
 			else G2_vis = 1;
+		}
+		if (yo == 'b' || yo == 'B')
+		{
+			if(G3_vis == 1) G3_vis = 0;
+			else G3_vis = 1;
 		}
 		if (yo == 'h' || yo == 'H')
 		{
@@ -225,8 +264,23 @@ void position()
 	while(1)
 	{	
 		srand(time(NULL));
-		G_x += dir_x;
-		if (rand()%2 == 1)
+		if (rand()%80 % 3 != 1 && magic_mode == 1)
+		{
+			G_x += dir_x;
+			if (rand()%80 % 5 == 2) //magic shake
+				dir_x *= -1;
+		}
+		else
+		{
+			G_x += dir_x;
+		}
+		if (rand()%80 % 2 == 1 && magic_mode == 1)
+		{
+			G_y += dir_y;
+			if (rand()%80 % 5 == 2) //magic shake
+				dir_y *= -1;
+		}
+		else
 			G_y += dir_y;
 		//left border
 		if (G_x <= 0) 
@@ -293,8 +347,23 @@ void position2()
 	while(1)
 	{	
 		srand(time(NULL));
-		G_x_2 += dir_x_2;
-		if (rand()%2 == 1)
+		if (rand()%80 % 3 != 1 && magic_mode == 1)
+		{
+			G_x_2 += dir_x_2;
+			if (rand()%80 % 5 == 2) //magic shake
+				dir_x_2 *= -1;
+		}
+		else
+		{
+			G_x_2 += dir_x_2;
+		}
+		if (rand()%80 % 2 == 1 && magic_mode == 1)
+		{
+			G_y_2 += dir_y_2;
+			if (rand()%80 % 7 == 2) //magic shake
+				dir_y_2 *= -1;
+		}
+		else
 			G_y_2 += dir_y_2;
 		//left border
 		if (G_x_2 <= 0) 
@@ -355,11 +424,94 @@ void position2()
 	printf("end of position thread for debugging.\n");
 }
 
+void position3()
+{
+	int i = 0;
+	while(1)
+	{	
+		srand(time(NULL));
+		if (rand()%80 % 3 != 1 && magic_mode == 1)
+		{
+			G_x_3 += dir_x_3;
+			if (rand()%80 % 5 == 2) //magic shake
+				dir_x_3 *= -1;
+		}
+		else
+		{
+			G_x_3 += dir_x_3;
+		}
+		if (rand()%80 % 2 == 1 && magic_mode == 1)
+		{
+			G_y_3 += dir_y_3;
+			if (rand()%80 % 5 == 2) //magic shake
+				dir_y_3 *= -1;
+		}
+		else
+			G_y_3 += dir_y_3;
+		//left border
+		if (G_x_3 <= 0) 
+		{
+			G_x_3 = 1;
+		}
+		// top border
+		if (G_y_3 <= 0) G_y_3 = 1;
+		// right border
+		// fuck you
+		if (G_x_3 >= parent_x - 2) 
+		{ 
+			G_x_3 = (parent_x - 2);
+		}
+		// detect bottom
+		if (G_y_3 >= parent_y - 2) 
+		{
+			G_y_3 = (parent_y - 2);
+		}
+
+		//hit wall
+		if ( (G_x_3 >= (parent_x - 2)) || (G_x_3 <= 1) )
+		{
+			dir_x_3 *= (-1);
+			// scoring region
+			if (G_x_3 >= (parent_x - 2) && G3_vis == 1) r_s += 1;
+			if (G_x_3 <= 1 && G3_vis == 1)  l_s += 1;
+		}
+
+		if (G_y_3 >= (parent_y - 2) || G_y_3 <= 1)
+		{ 
+			dir_y_3 *= (-1);
+		}
+
+		//verify hitting
+		if (G_x_3 == 3)
+		{
+			int helloworld = abs(r_p_p - G_y_3);
+			if (helloworld <= 3)
+			{
+				//hit player
+				dir_x_3 *= (-1);
+			}
+		}
+		if (G_x_3 == (parent_x - 4))
+		{
+			int helloworld = abs(l_p_p - G_y_3);
+			if (helloworld <= 3)
+			{
+				//hit player
+				dir_x_3 *= (-1);
+			}
+		}
+
+		
+		usleep(ball_speed);
+	}
+	printf("end of position thread for debugging.\n");
+}
+
 int main()
 {
 	int a;
 	//thread
-		pthread_t id, id_for_keyboard, l_id, r_id, r_key, l_key, ball2;
+		pthread_t id, id_for_keyboard, l_id, r_id, r_key, l_key, ball2, ball3;
         int i,ret;
 	//
 	initscr();
@@ -409,11 +561,21 @@ int main()
     	printf("Create thread error!\r\n");
         exit(1);
     }
+    ret = pthread_create(&ball3, NULL, (void *)position3, NULL);
+    if (ret != 0)
+    {
+    	printf("Create thread error!\r\n");
+        exit(1);
+    }
     
 	//--------
 
 	// draw our borders
 	draw_borders(field);
+
+	getmaxyx(stdscr, new_y, new_x);
+	G_x = new_x/2;
+	G_x_2 = new_x/2*-1;
 	// simulate the game loop
 	while(1) {
 		//resposive
@@ -433,6 +595,7 @@ int main()
 		draw_player(field);
 		draw_ball(field);
 		if(G2_vis == 1) draw_ball2(field);
+		if(G3_vis == 1) draw_ball3(field);
 		draw_borders(field);
 	  	// refresh each window
 	    wrefresh(field);

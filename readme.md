@@ -37,7 +37,9 @@ player 2
 	r => 球球減速
 	t => 球球加速
 
-	n => 2 ball mode / 1 ball mode
+	n => add/remove a ball
+	b => add/remove a ball
+	m => magic mode
 
 	q => quit game
 	c => clear score
