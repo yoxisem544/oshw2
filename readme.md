@@ -1,4 +1,7 @@
 #OSHW2 執行序
+## 同步在github
+
+	https://github.com/yoxisem544/oshw2
 ## build & run
 	gcc oshw2.c -o oshw2 -lcurses -lncurses && ./oshw2
 以下為相依性lib必須加在後面compile不然會死
